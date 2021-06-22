@@ -13,12 +13,12 @@ namespace Rocky.Models
         [Key]
         public int ProductId { get; set; }
         [Required]
-        public string Name { get; set; }
-       
+        public string Name { get; set; }       
         public string Description { get; set; }
         [Required]
-        [Range(1,int.MaxValue)]
+        [Range(0,int.MaxValue)]
         public int Price { get; set; }
+        public string Image { get; set; }
         [Display(Name = "Category Name")]
         public int CategoryId { get; set; }
         [ForeignKey("CategoryId")]
