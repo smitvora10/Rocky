@@ -1,4 +1,7 @@
-﻿<!DOCTYPE html>
+﻿@using Microsoft.AspNetCore.Http
+@inject IHttpContextAccessor HttpContextAccessor
+@using Rocky.Utility
+<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="utf-8" />
@@ -58,11 +61,28 @@
                         <input class="form-control mr-sm-2" type="search" placeholder="Search" aria-label="Search">
                         <button class="btn btn-outline-success my-2 my-sm-0" type="submit">Search</button>
                     </form>
+                    @if (HttpContextAccessor.HttpContext.Session.Get<List<ShoppingCart>>(WC.SessionCart) != null)
+                    {
+                        <a asp-action="Index" asp-controller="Cart" class="nav-link">
+                            @{
+                                var count = HttpContextAccessor.HttpContext.Session.Get<List<ShoppingCart>>(WC.SessionCart).Count;
+                            }
+                            <i class="fas fa-shopping-cart text-white"></i><span class="text-white">(@count)</span>
+                        </a>
+
+                    }
+                    else
+                    {
+                        <a href="#" class="nav-link">
+                            <i class="fas fa-shopping-cart text-white"></i><span class="text-white">(0)</span>
+                        </a>
+                    }
+
                 </div>
             </div>
         </nav>
     </header>
-    <br/>
+    <br />
     <div class="container">
         <main role="main" class="pb-3">
             @RenderBody()

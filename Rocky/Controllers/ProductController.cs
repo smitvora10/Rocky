@@ -40,7 +40,7 @@ namespace Rocky.Controllers
         {
             ProductVM productVM = new ProductVM()
             {
-                product = new Product(),
+                Product = new Product(),
                 CategorySelectList = _db.Category.Select(i => new SelectListItem
                 {
                     Text = i.Name,
@@ -61,8 +61,8 @@ namespace Rocky.Controllers
             //for update
             else
             {
-                productVM.product = _db.Product.Find(Id);
-                if (productVM.product == null)
+                productVM.Product = _db.Product.Find(Id);
+                if (productVM.Product == null)
                 {
                     return NotFound();
                 }
@@ -81,7 +81,7 @@ namespace Rocky.Controllers
                 var files = HttpContext.Request.Form.Files;
                 string webRootPath = _webHostEnvironment.WebRootPath;
 
-                if (productVM.product.ProductId == 0)
+                if (productVM.Product.ProductId == 0)
                 {
                     //Creating
                     string upload = webRootPath + WC.ImagePath;
@@ -93,14 +93,14 @@ namespace Rocky.Controllers
                         files[0].CopyTo(fileStream);
                     }
 
-                    productVM.product.Image = fileName + extension;
+                    productVM.Product.Image = fileName + extension;
 
-                    _db.Product.Add(productVM.product);
+                    _db.Product.Add(productVM.Product);
                 }
                 else
                 {
                     //updating
-                    var objFromDb = _db.Product.AsNoTracking().FirstOrDefault(u => u.ProductId == productVM.product.ProductId);
+                    var objFromDb = _db.Product.AsNoTracking().FirstOrDefault(u => u.ProductId == productVM.Product.ProductId);
 
                     if(files.Count>0)
                     {                       
@@ -120,13 +120,13 @@ namespace Rocky.Controllers
                         {
                             files[0].CopyTo(filestream);
                         }
-                        productVM.product.Image = filename + extension;
+                        productVM.Product.Image = filename + extension;
                 }
                     else
                     {
-                        productVM.product.Image = objFromDb.Image;
+                        productVM.Product.Image = objFromDb.Image;
                     }
-                    _db.Product.Update(productVM.product);
+                    _db.Product.Update(productVM.Product);
                 }
                 _db.SaveChanges();
                 return RedirectToAction("Index");
