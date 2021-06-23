@@ -121,7 +121,7 @@ namespace Rocky.Controllers
                             files[0].CopyTo(filestream);
                         }
                         productVM.product.Image = filename + extension;
-                    }
+                }
                     else
                     {
                         productVM.product.Image = objFromDb.Image;
