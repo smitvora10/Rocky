@@ -1,8 +1,44 @@
-﻿@{
-    ViewData["Title"] = "Home Page";
-}
+﻿@model Rocky.Models.ViewModels.HomeVM
 
-<div class="text-center">
-    <h1 class="display-4">Welcome</h1>
-    <p>Learn about <a href="https://docs.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
+<div class="container mx-2">
+    <div class="text-center">
+        <button class="btn btn-outline-dark filter-button" data-filter="all">All</button>
+        @foreach (var cat in Model.Categories)
+        {
+            <button class="btn btn-outline-dark filter-button" data-filter="@cat.Name.Replace(" ","_")">@cat.Name</button>
+        }
+    </div>
+    <br/>
+    <div class="row">        
+        @foreach (var prod in Model.Products)
+        {
+            <partial name="_IndividualProductCard" model="prod" />
+        }
+    </div>
+
 </div>
+
+@section Scripts{ 
+    <script>
+    $(document).ready(function(){
+
+    $(".filter-button").click(function(){
+
+        var value = $(this).attr('data-filter');
+        console.log(value);
+        if(value == "all")
+        {
+            $('.filter').show('');
+        }
+        else
+        {
+            $(".filter").not('.'+value).hide('');
+            $('.filter').filter('.'+value).show('');
+
+        }
+        console.log($('.filter'));
+    });
+
+});
+    </script>
+}
