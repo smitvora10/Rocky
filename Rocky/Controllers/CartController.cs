@@ -64,9 +64,24 @@ namespace Rocky.Controllers
             productUserVM = new ProductUserVM()
             {
                 ApplicationUser = _db.ApplicationUser.FirstOrDefault(u => u.Id == userId),
-                ProductList = prodList
+                ProductList = prodList.ToList()
             };
             return View(productUserVM);
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        [ActionName("Summary")]
+        public IActionResult SummaryPost(ProductUserVM productUserVM)
+        {
+            
+            return RedirectToAction(nameof(InquiryConfirmation));
+        }
+
+        public IActionResult InquiryConfirmation()
+        {
+            HttpContext.Session.Clear();
+            return View();
         }
         public IActionResult Remove(int? Id)
         {

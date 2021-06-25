@@ -30,23 +30,25 @@
                         <li class="nav-item active">
                             <a class="nav-link text-light" asp-area="" asp-controller="Home" asp-action="Index">Home</a>
                         </li>
+                        @if (User.IsInRole(Rocky.WC.AdminRole))
+                        {
+                            <li class="nav-item dropdown">
+                                <a class="nav-link dropdown-toggle text-light" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                    Content Management
+                                </a>
+                                <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+                                    <a class="dropdown-item nav-link text-dark" asp-area="" asp-controller="Category" asp-action="Index">Category</a>
+                                    <a class="dropdown-item nav-link text-dark" asp-area="" asp-controller="ApplicationType" asp-action="Index">Application Type</a>
+                                    <a class="dropdown-item nav-link text-dark" asp-area="" asp-controller="Product" asp-action="Index">Product</a>
 
-                        <li class="nav-item dropdown">
-                            <a class="nav-link dropdown-toggle text-light" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                Content Management
-                            </a>
-                            <div class="dropdown-menu" aria-labelledby="navbarDropdown">
-                                <a class="dropdown-item nav-link text-dark" asp-area="" asp-controller="Category" asp-action="Index">Category</a>
-                                <a class="dropdown-item nav-link text-dark" asp-area="" asp-controller="ApplicationType" asp-action="Index">Application Type</a>
-                                <a class="dropdown-item nav-link text-dark" asp-area="" asp-controller="Product" asp-action="Index">Product</a>
 
-                                @if (User.IsInRole(Rocky.WC.AdminRole))
-                                {
                                     <div class="dropdown-divider"></div>
                                     <a class="dropdown-item nav-link text-dark" asp-area="Identity" asp-page="/Account/Register">Create Admin User</a>
-                                }
-                            </div>
-                        </li>
+
+                                </div>
+                            </li>
+                        }
+
                         <li class="nav-item">
                             <a class="nav-link disabled text-light" href="#">Disabled</a>
                         </li>
@@ -55,9 +57,9 @@
                         </li>
                     </ul>
                     @*<form class="form-inline my-2 my-lg-0">
-                        <input class="form-control mr-sm-2" type="search" placeholder="Search" aria-label="Search">
-                        <button class="btn btn-outline-success my-2 my-sm-0" type="submit">Search</button>
-                    </form>*@
+                            <input class="form-control mr-sm-2" type="search" placeholder="Search" aria-label="Search">
+                            <button class="btn btn-outline-success my-2 my-sm-0" type="submit">Search</button>
+                        </form>*@
 
                     @if (HttpContextAccessor.HttpContext.Session.Get<List<ShoppingCart>>(WC.SessionCart) != null)
                     {
@@ -75,7 +77,7 @@
                             <i class="fas fa-shopping-cart text-white"></i><span class="text-white">(0)</span>
                         </a>
                     }
-                    <partial name="_LoginPartial"/>
+                    <partial name="_LoginPartial" />
                 </div>
             </div>
         </nav>
