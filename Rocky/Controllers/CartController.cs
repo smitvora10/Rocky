@@ -1,14 +1,19 @@
 ﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Identity.UI.Services;
 using Microsoft.AspNetCore.Mvc;
 using Rocky_DataAccess.Data;
+using Rocky_DataAccess.Repository.IRepository;
 using Rocky_Models;
 using Rocky_Models.ViewModels;
 using Rocky_Utility;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Security.Claims;
+using System.Text;
 using System.Threading.Tasks;
 
 namespace Rocky.Controllers
@@ -16,13 +21,24 @@ namespace Rocky.Controllers
     [Authorize]
     public class CartController : Controller
     {
-        private readonly ApplicationDbContext _db;
+        private readonly IWebHostEnvironment _webHostEnvironment;
+        private readonly IEmailSender _emailSender;
+        private readonly IProductRepository _prodRepo;
+        private readonly IApplicationUserRepository _appUserRepo;
+        private readonly IInquiryHeaderRepository _inqHRepo;
+        private readonly IInquiryDetailRepository _inqDRepo;
         [BindProperty]
         public ProductUserVM productUserVM { get; set; }
 
-        public CartController(ApplicationDbContext db)
+        public CartController(IProductRepository productRepo, IApplicationUserRepository appUserRepo, IInquiryHeaderRepository inqHRepo, IInquiryDetailRepository inqDRepo
+            , IWebHostEnvironment webHostEnvironment, IEmailSender emailSender)
         {
-            _db = db;     
+            _webHostEnvironment = webHostEnvironment;
+            _emailSender = emailSender;
+            _prodRepo = productRepo;
+            _appUserRepo = appUserRepo;
+            _inqHRepo = inqHRepo;
+            _inqDRepo = inqDRepo;
         }
         public IActionResult Index()
         {
@@ -34,7 +50,7 @@ namespace Rocky.Controllers
             }
 
             List<int> prodInCart = shoppingCartList.Select(i => i.ShoppingProductId).ToList();
-            IEnumerable<Product> prodList = _db.Product.Where(u => prodInCart.Contains(u.ProductId));
+            IEnumerable<Product> prodList = _prodRepo.GetAll(u => prodInCart.Contains(u.ProductId));
 
             return View(prodList);
         }
@@ -59,11 +75,11 @@ namespace Rocky.Controllers
             }
 
             List<int> prodInCart = shoppingCartList.Select(i => i.ShoppingProductId).ToList();
-            IEnumerable<Product> prodList = _db.Product.Where(u => prodInCart.Contains(u.ProductId));
+            IEnumerable<Product> prodList = _prodRepo.GetAll(u => prodInCart.Contains(u.ProductId));
 
             productUserVM = new ProductUserVM()
             {
-                ApplicationUser = _db.ApplicationUser.FirstOrDefault(u => u.Id == userId),
+                ApplicationUser = _appUserRepo.FirstOrDefault(u => u.Id == userId),
                 ProductList = prodList.ToList()
             };
             return View(productUserVM);
@@ -74,7 +90,49 @@ namespace Rocky.Controllers
         [ActionName("Summary")]
         public IActionResult SummaryPost(ProductUserVM productUserVM)
         {
-            
+            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+
+            //var PathToTemplate = _webHostEnvironment.WebRootPath + Path.DirectorySeparatorChar.ToString()
+            //  + "templates" + Path.DirectorySeparatorChar.ToString() +
+            //  "Inquiry.html";
+
+            //var subject = "New Inquiry";
+            //string HtmlBody = "";
+            //using (StreamReader sr = System.IO.File.OpenText(PathToTemplate))
+            //{
+            //    HtmlBody = sr.ReadToEnd();
+            //}
+            ////Name: { 0}
+            ////Email: { 1}
+            ////Phone: { 2}
+            ////Products: {3}
+
+
+            InquiryHeader inquiryHeader = new InquiryHeader()
+            {
+                ApplicationUserId = userId,
+                InquiryDate = DateTime.Now.Date,
+                PhoneNumber = productUserVM.ApplicationUser.PhoneNumber,
+                FullName = productUserVM.ApplicationUser.FullName,
+                Email = productUserVM.ApplicationUser.Email
+            };
+            _inqHRepo.Add(inquiryHeader);
+            _inqHRepo.Save();            
+
+
+            foreach (var prod in productUserVM.ProductList)
+            {
+
+                InquiryDetail inquiryDetail = new InquiryDetail()
+                {
+                    InquiryHeaderId = inquiryHeader.InquiryHeaderId,
+                    ProductId = prod.ProductId
+
+                };
+                _inqDRepo.Add(inquiryDetail);
+
+            }
+            _inqDRepo.Save();
             return RedirectToAction(nameof(InquiryConfirmation));
         }
 
@@ -95,6 +153,6 @@ namespace Rocky.Controllers
 
             HttpContext.Session.Set(WC.SessionCart, shoppingCartList);
             return RedirectToAction(nameof(Index));
-        }        
+        }
     }
 }

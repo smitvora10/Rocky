@@ -3,15 +3,17 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Rocky_DataAccess.Data;
 
 namespace Rocky_DataAccess.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20210628174631_addInquiryHeaderAndDetailToDb")]
+    partial class addInquiryHeaderAndDetailToDb
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -258,7 +260,7 @@ namespace Rocky_DataAccess.Migrations
 
             modelBuilder.Entity("Rocky_Models.InquiryDetail", b =>
                 {
-                    b.Property<int>("InquiryDetailId")
+                    b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int")
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
@@ -269,7 +271,7 @@ namespace Rocky_DataAccess.Migrations
                     b.Property<int>("ProductId")
                         .HasColumnType("int");
 
-                    b.HasKey("InquiryDetailId");
+                    b.HasKey("Id");
 
                     b.HasIndex("InquiryHeaderId");
 
@@ -280,7 +282,7 @@ namespace Rocky_DataAccess.Migrations
 
             modelBuilder.Entity("Rocky_Models.InquiryHeader", b =>
                 {
-                    b.Property<int>("InquiryHeaderId")
+                    b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int")
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
@@ -303,7 +305,7 @@ namespace Rocky_DataAccess.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.HasKey("InquiryHeaderId");
+                    b.HasKey("Id");
 
                     b.HasIndex("ApplicationUserId");
 

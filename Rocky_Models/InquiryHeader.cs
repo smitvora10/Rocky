@@ -11,12 +11,13 @@ namespace Rocky_Models
     public class InquiryHeader
     {
         [Key]
-        public int Id { get; set; }
+        public int InquiryHeaderId { get; set; }
 
         public string ApplicationUserId { get; set; }
         [ForeignKey("ApplicationUserId")]
         public ApplicationUser ApplicationUser { get; set; }
 
+        [DataType(DataType.Date)]
         public DateTime InquiryDate { get; set; }
 
         [Required]

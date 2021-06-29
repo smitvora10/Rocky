@@ -58,6 +58,18 @@
                             </li>
                         }
 
+                        @if (User.IsInRole(Rocky_Utility.WC.AdminRole))
+                        {
+                            <li class="nav-item dropdown">
+                                <a class="nav-link dropdown-toggle text-light" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                    Order/Inquiry Management
+                                </a>
+                                <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+                                    <a class="dropdown-item nav-link text-dark" asp-area="" asp-controller="Inquiry" asp-action="Index">Inquiry</a>                              
+                                </div>
+                            </li>
+                        }
+
                         <li class="nav-item">
                             <a class="nav-link disabled text-light" href="#">Disabled</a>
                         </li>
