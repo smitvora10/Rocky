@@ -8,5 +8,8 @@ namespace Rocky_Models
     public class ShoppingCart
     {
         public int ShoppingProductId { get; set; }
+
+        public int SqFt { get; set; }
+       
     }
 }

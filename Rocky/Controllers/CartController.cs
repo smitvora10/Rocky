@@ -50,7 +50,15 @@ namespace Rocky.Controllers
             }
 
             List<int> prodInCart = shoppingCartList.Select(i => i.ShoppingProductId).ToList();
-            IEnumerable<Product> prodList = _prodRepo.GetAll(u => prodInCart.Contains(u.ProductId));
+            IEnumerable<Product> prodListTemp = _prodRepo.GetAll(u => prodInCart.Contains(u.ProductId));
+            IList<Product> prodList = new List<Product>();
+
+            foreach (var cartObj in shoppingCartList)
+            {
+                Product productTemp = prodListTemp.FirstOrDefault(u => u.ProductId == cartObj.ShoppingProductId);
+                productTemp.TempSqFt = cartObj.SqFt;
+                prodList.Add(productTemp);
+            }
 
             return View(prodList);
         }
@@ -58,14 +66,45 @@ namespace Rocky.Controllers
         [HttpPost]
         [ValidateAntiForgeryToken]
         [ActionName("Index")]
-        public IActionResult IndexPost()
+        public IActionResult IndexPost(IEnumerable<Product> prodList)
         {
+            List<ShoppingCart> shoppingCartList = new List<ShoppingCart>();
+            foreach (var obj in prodList)
+            {
+                shoppingCartList.Add(new ShoppingCart { ShoppingProductId = obj.ProductId, SqFt = obj.TempSqFt });
+            }
+            HttpContext.Session.Set(WC.SessionCart, shoppingCartList);
 
             return RedirectToAction(nameof(Summary));
         }
         public IActionResult Summary()
         {
-            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            ApplicationUser applicationUser;
+            
+            if(User.IsInRole(WC.AdminRole))
+            {
+                if (HttpContext.Session.Get<int>(WC.SessionInquiryId) != 0)
+                {
+                    InquiryHeader inquiryHeader = _inqHRepo.FirstOrDefault(u => u.InquiryHeaderId == HttpContext.Session.Get<int>(WC.SessionInquiryId));
+                    applicationUser = new ApplicationUser()
+                    {
+                        FullName = inquiryHeader.FullName,
+                        Email = inquiryHeader.Email,
+                        PhoneNumber = inquiryHeader.PhoneNumber                       
+
+                    };
+                }
+                else
+                {
+                    applicationUser = new ApplicationUser();
+                }
+            }
+            else
+            {
+                var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+                applicationUser = _appUserRepo.FirstOrDefault(u => u.Id == userId);
+            }
+
 
             List<ShoppingCart> shoppingCartList = new List<ShoppingCart>();
             if (HttpContext.Session.Get<IEnumerable<ShoppingCart>>(WC.SessionCart) != null &&
@@ -79,9 +118,16 @@ namespace Rocky.Controllers
 
             productUserVM = new ProductUserVM()
             {
-                ApplicationUser = _appUserRepo.FirstOrDefault(u => u.Id == userId),
-                ProductList = prodList.ToList()
+                ApplicationUser = applicationUser,                
             };
+
+            foreach(var obj in shoppingCartList)
+            {
+                Product prodTemp = _prodRepo.FirstOrDefault(u => u.ProductId == obj.ShoppingProductId);
+                prodTemp.TempSqFt = obj.SqFt;
+                productUserVM.ProductList.Add(prodTemp);
+            }
+
             return View(productUserVM);
         }
 
@@ -151,6 +197,17 @@ namespace Rocky.Controllers
             }
             shoppingCartList.Remove(shoppingCartList.FirstOrDefault(u => u.ShoppingProductId == Id));
 
+            HttpContext.Session.Set(WC.SessionCart, shoppingCartList);
+            return RedirectToAction(nameof(Index));
+        }
+
+        public IActionResult UpdateCart(IEnumerable<Product> prodList)
+        {
+            List<ShoppingCart> shoppingCartList = new List<ShoppingCart>();
+            foreach(var obj in prodList)
+            {
+                shoppingCartList.Add(new ShoppingCart { ShoppingProductId = obj.ProductId, SqFt = obj.TempSqFt });
+            }
             HttpContext.Session.Set(WC.SessionCart, shoppingCartList);
             return RedirectToAction(nameof(Index));
         }

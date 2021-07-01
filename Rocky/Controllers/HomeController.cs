@@ -11,6 +11,7 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
+using System.Security.Claims;
 using System.Threading.Tasks;
 
 namespace Rocky.Controllers
@@ -20,12 +21,15 @@ namespace Rocky.Controllers
         private readonly ILogger<HomeController> _logger;
         private readonly IProductRepository _prodRepo;
         private readonly ICategoryRepository _catRepo;
+       
 
+        [BindProperty]
+        public DetailsVM detailsVM { get; set; }
         public HomeController(ILogger<HomeController> logger,ICategoryRepository catRepo,IProductRepository productRepo)
         {
             _logger = logger;
             _prodRepo = productRepo;
-            _catRepo = catRepo;
+            _catRepo = catRepo;            
         }
 
         public IActionResult Index()
@@ -40,13 +44,15 @@ namespace Rocky.Controllers
         }
         public IActionResult Details(int id)
         {
+            
+
             List<ShoppingCart> shoppingCartList = new List<ShoppingCart>();
             if (HttpContext.Session.Get<IEnumerable<ShoppingCart>>(WC.SessionCart) != null &&
                 HttpContext.Session.Get<IEnumerable<ShoppingCart>>(WC.SessionCart).Count() > 0)
             {
                 shoppingCartList = HttpContext.Session.Get<List<ShoppingCart>>(WC.SessionCart);
             }
-            DetailsVM detailsVM = new DetailsVM()
+            detailsVM = new DetailsVM()
             {
                 Product = _prodRepo.FirstOrDefault(u => u.ProductId == id, includeProperties: "Category,ApplicationType"),
                 ExistsInCart = false
@@ -67,13 +73,16 @@ namespace Rocky.Controllers
 
         public IActionResult DetailsPost(int id)
         {
+            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+
             List<ShoppingCart> shoppingCartList = new List<ShoppingCart>();
             if (HttpContext.Session.Get<IEnumerable<ShoppingCart>>(WC.SessionCart) != null &&
                 HttpContext.Session.Get<IEnumerable<ShoppingCart>>(WC.SessionCart).Count() > 0)
             {
                 shoppingCartList = HttpContext.Session.Get<List<ShoppingCart>>(WC.SessionCart);
             }
-            shoppingCartList.Add(new ShoppingCart { ShoppingProductId = id });
+
+            shoppingCartList.Add(new ShoppingCart { ShoppingProductId = id, SqFt = detailsVM.Product.TempSqFt});
             HttpContext.Session.Set(WC.SessionCart, shoppingCartList);
             return RedirectToAction(nameof(Index));
         }

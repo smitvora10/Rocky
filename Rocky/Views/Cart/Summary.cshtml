@@ -1,4 +1,4 @@
-﻿@model Rocky_Models.ViewModels.ProductUserVM 
+﻿@model Rocky_Models.ViewModels.ProductUserVM
 
 <form method="post">
     <br />
@@ -25,10 +25,11 @@
                                 </div>
                                 <div class="row my-1">
                                     <div class="col-3">
-                                        <label>Name</label>
+                                        <label>FullName</label>
                                     </div>
                                     <div class="col-9">
                                         <input asp-for="@Model.ApplicationUser.FullName" type="text" class="form-control" />
+                                        <span asp-validation-for="@Model.ApplicationUser.FullName" class="text-danger"></span>
 
                                     </div>
                                 </div>
@@ -37,8 +38,8 @@
                                         <label>Phone</label>
                                     </div>
                                     <div class="col-9">
-                                        <input asp-for="@Model.ApplicationUser.PhoneNumber" type="text" class="form-control" />
-                                        <span class="text-danger"></span>
+                                        <input asp-for="@Model.ApplicationUser.PhoneNumber" type="text" class="form-control" required/>
+                                        <span asp-validation-for="@Model.ApplicationUser.PhoneNumber" class="text-danger"></span>
                                     </div>
                                 </div>
                                 <div class="row my-1">
@@ -46,10 +47,50 @@
                                         <label>Email</label>
                                     </div>
                                     <div class="col-9">
-                                        <input asp-for="@Model.ApplicationUser.Email" type="text" class="form-control" />
-                                        <span class="text-danger"></span>
+                                        <input asp-for="@Model.ApplicationUser.Email" type="text" class="form-control" required/>
+                                        <span asp-validation-for="@Model.ApplicationUser.Email" class="text-danger"></span>
                                     </div>
                                 </div>
+                                @if (User.IsInRole(Rocky_Utility.WC.AdminRole))
+                                {
+                                    <div class="row my-1">
+                                        <div class="col-3">
+                                            <label>Street Address</label>
+                                        </div>
+                                        <div class="col-9">
+                                            <input asp-for="@Model.ApplicationUser.StreetAddress" type="text" class="form-control" />
+                                            <span asp-validation-for="@Model.ApplicationUser.StreetAddress" class="text-danger"></span>
+                                        </div>
+                                    </div>
+                                    <div class="row my-1">
+                                        <div class="col-3">
+                                            <label>Postal Code</label>
+                                        </div>
+                                        <div class="col-9">
+                                            <input asp-for="@Model.ApplicationUser.PostalCode" type="text" class="form-control" />
+                                            <span asp-validation-for="@Model.ApplicationUser.PostalCode" class="text-danger"></span>
+                                        </div>
+                                    </div>
+                                    <div class="row my-1">
+                                        <div class="col-3">
+                                            <label>City</label>
+                                        </div>
+                                        <div class="col-9">
+                                            <input asp-for="@Model.ApplicationUser.City" type="text" class="form-control" />
+                                            <span asp-validation-for="@Model.ApplicationUser.City" class="text-danger"></span>
+                                        </div>
+                                    </div>
+                                    <div class="row my-1">
+                                        <div class="col-3">
+                                            <label>State</label>
+                                        </div>
+                                        <div class="col-9">
+                                            <input asp-for="@Model.ApplicationUser.State" type="text" class="form-control" />
+                                            <span asp-validation-for="@Model.ApplicationUser.State" class="text-danger"></span>
+                                        </div>
+                                    </div>
+                                }
+
                             </div>
                             <div class="col-12 col-lg-5 row">
                                 <div class="col-12">
@@ -58,6 +99,7 @@
                                     </h4>
 
                                     <ul class="list-group mb-3">
+                                        @{ var Total = 0.0;}
                                         @for (var i = 0; i < Model.ProductList.Count(); i++)
                                         {
                                             <input type="hidden" asp-for="@Model.ProductList[i].Name" />
@@ -65,11 +107,31 @@
                                             <li class="list-group-item d-flex justify-content-between">
                                                 <div>
                                                     <h6 class="my-0">@Model.ProductList[i].Name</h6>
-                                                    <small class="text-muted">Price per SqFt.: ₹@Model.ProductList[i].Price</small>
-                                                </div>
-                                            </li>
-                                        }
+                                                    @if (User.IsInRole(Rocky_Utility.WC.AdminRole))
+                                                    {
+                                                        <small class="text-muted">SqFt.: @Model.ProductList[i].TempSqFt</small>
+                                                    }
+                                                    else
+                                                    {
+                                                        <small class="text-muted">Price per SqFt.: ₹@Model.ProductList[i].Price</small>
+                                                    }
 
+                                                </div>
+                                                @if (User.IsInRole(Rocky_Utility.WC.AdminRole))
+                                                {
+                                                    <span class="text-muted">₹@(Model.ProductList[i].Price*Model.ProductList[i].TempSqFt)</span>
+                                                }
+                                            </li>
+                                            Total += Model.ProductList[i].Price * Model.ProductList[i].TempSqFt;
+                                        }
+                                        @if (User.IsInRole(Rocky_Utility.WC.AdminRole))
+                                        {
+                                            <li class="list-group-item d-flex justify-content-between bg-light">
+                                                <small class="text-info"> Total ₹(IR)</small>
+                                                <strong class="text-info">₹@Total</strong>
+                                            </li>
+
+                                        }
                                     </ul>
                                 </div>
                             </div>
@@ -78,9 +140,19 @@
                 </div>
                 <div class="card-footer">
                     <div class="row">
-                        <div class="col-12 col-md-5 offset-md-7">
-                            <button type="submit" class="btn btn-primary form-control">Submit Inquiry</button>
-                        </div>
+                        @if (User.IsInRole(Rocky_Utility.WC.AdminRole))
+                        {
+                            <div class="col-12 col-md-5 offset-md-7">
+                                <button type="submit" class="btn btn-outline-primary form-control">Submit Inquiry</button>
+                            </div>
+                        }
+                        else
+                        {
+                            <div class="col-12 col-md-5 offset-md-7">
+                                <button type="submit" class="btn btn-outline-success form-control">Submit Order</button>
+                            </div>
+                        }
+
                     </div>
                 </div>
             </div>

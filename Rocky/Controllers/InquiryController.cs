@@ -7,9 +7,11 @@ using System.Threading.Tasks;
 using Rocky_Models.ViewModels;
 using Rocky_Models;
 using Rocky_Utility;
+using Microsoft.AspNetCore.Authorization;
 
 namespace Rocky.Controllers
 {
+    [Authorize(Roles=WC.AdminRole)]
     public class InquiryController : Controller
     {
         [BindProperty]

@@ -40,8 +40,10 @@ namespace Rocky.Controllers
             {
                 _catRepo.Add(obj);
                 _catRepo.Save();
+                TempData[WC.Success] = "Category created Successfully";
                 return RedirectToAction("Index");
             }
+            TempData[WC.Error] = "Error while creating a Category";
             return View(obj);
         }
         //GET Category
@@ -56,6 +58,7 @@ namespace Rocky.Controllers
             {
                 return NotFound();
             }
+            
             return View(obj);
         }
         //POST Category
@@ -68,8 +71,11 @@ namespace Rocky.Controllers
             {
                 _catRepo.Update(obj);
                 _catRepo.Save();
+                TempData[WC.Success] = "Category edited Successfully";
                 return RedirectToAction("Index");
+                
             }
+            TempData[WC.Error] = "Error while editing a Category";
             return View(obj);
         }
         //GET - DELETE
@@ -100,6 +106,7 @@ namespace Rocky.Controllers
             }
             _catRepo.Remove(obj);
             _catRepo.Save();
+            TempData[WC.Error] = "Category Deleted";
             return RedirectToAction("Index");
 
 
