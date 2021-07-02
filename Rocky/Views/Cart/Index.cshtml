@@ -13,6 +13,7 @@
                             Shopping Cart
                         </div>
                         <div class="col-6 text-right">
+                            <a asp-action="ClearCart" class="btn btn-outline-warning btn-sm">Clear Cart</a>
                             <a asp-action="Index" asp-controller="Home" class="btn btn-outline-info btn-sm">Continue Shopping</a>
                         </div>
                     </div>
@@ -55,7 +56,7 @@
                             </div>
 
                             <hr />
-                            var Total = 0;
+                            var orderTotal = 0;
                             @for (var i =0;i<Model.Count();i++)
                             {
                                 <input asp-for="@Model[i].ProductId" hidden />
@@ -98,14 +99,14 @@
                                         </a>
                                     </div>
                                 </div>
-                                Total += Model[i].Price * Model[i].TempSqFt;
+                                orderTotal += Model[i].Price * Model[i].TempSqFt;
                                 <hr />
 
                             }
                             @if (User.IsInRole(WC.AdminRole))
                             {
                                 <div class="col-12 text-right">
-                                    Order Total : ₹@Total
+                                    Order Total : ₹@orderTotal
                                 </div>
                             }
 

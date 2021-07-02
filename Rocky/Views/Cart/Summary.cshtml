@@ -1,6 +1,6 @@
 ﻿@model Rocky_Models.ViewModels.ProductUserVM
 
-<form method="post">
+<form method="post" id="product-form">
     <br />
     <div class="backgroundWhiteBorder">
         <div class="container">
@@ -38,7 +38,7 @@
                                         <label>Phone</label>
                                     </div>
                                     <div class="col-9">
-                                        <input asp-for="@Model.ApplicationUser.PhoneNumber" type="text" class="form-control" required/>
+                                        <input asp-for="@Model.ApplicationUser.PhoneNumber" type="text" class="form-control" required />
                                         <span asp-validation-for="@Model.ApplicationUser.PhoneNumber" class="text-danger"></span>
                                     </div>
                                 </div>
@@ -47,7 +47,7 @@
                                         <label>Email</label>
                                     </div>
                                     <div class="col-9">
-                                        <input asp-for="@Model.ApplicationUser.Email" type="text" class="form-control" required/>
+                                        <input asp-for="@Model.ApplicationUser.Email" type="text" class="form-control" required />
                                         <span asp-validation-for="@Model.ApplicationUser.Email" class="text-danger"></span>
                                     </div>
                                 </div>
@@ -99,11 +99,13 @@
                                     </h4>
 
                                     <ul class="list-group mb-3">
-                                        @{ var Total = 0.0;}
+                                        @{ var orderTotal = 0.0;}
                                         @for (var i = 0; i < Model.ProductList.Count(); i++)
                                         {
                                             <input type="hidden" asp-for="@Model.ProductList[i].Name" />
                                             <input type="hidden" asp-for="@Model.ProductList[i].ProductId" />
+                                            <input type="hidden" asp-for="@Model.ProductList[i].Price" />
+                                            <input type="hidden" asp-for="@Model.ProductList[i].TempSqFt" />
                                             <li class="list-group-item d-flex justify-content-between">
                                                 <div>
                                                     <h6 class="my-0">@Model.ProductList[i].Name</h6>
@@ -122,18 +124,29 @@
                                                     <span class="text-muted">₹@(Model.ProductList[i].Price*Model.ProductList[i].TempSqFt)</span>
                                                 }
                                             </li>
-                                            Total += Model.ProductList[i].Price * Model.ProductList[i].TempSqFt;
+                                            orderTotal += Model.ProductList[i].Price * Model.ProductList[i].TempSqFt;
                                         }
                                         @if (User.IsInRole(Rocky_Utility.WC.AdminRole))
                                         {
                                             <li class="list-group-item d-flex justify-content-between bg-light">
-                                                <small class="text-info"> Total ₹(IR)</small>
-                                                <strong class="text-info">₹@Total</strong>
+                                                <small class="text-info"> Order Total ₹(IR)</small>
+                                                <strong class="text-info">₹@orderTotal</strong>
                                             </li>
 
                                         }
                                     </ul>
                                 </div>
+
+                                @if (User.IsInRole(Rocky_Utility.WC.AdminRole))
+                                {
+                                    <div class="col-12">
+                                        <div class="container">
+                                            <div id="dropin-container"></div>
+                                            <input type="hidden" id="nonce" name="payment_method_nonce" />
+                                        </div>
+                                    </div>
+                                }
+
                             </div>
                         </div>
                     </div>
@@ -142,14 +155,20 @@
                     <div class="row">
                         @if (User.IsInRole(Rocky_Utility.WC.AdminRole))
                         {
-                            <div class="col-12 col-md-5 offset-md-7">
-                                <button type="submit" class="btn btn-outline-primary form-control">Submit Inquiry</button>
+                            <div class="col-6 col-md-3 offset-md-6">
+                                <button class="btn btn-outline-success form-control" id="submit-button"><i class="fa fa-paper-plane" aria-hidden="true"></i>Submit Order</button>
+                            </div>
+                            <div class="col-6 col-md-3">
+                                <a class="btn btn-outline-info form-control" asp-action="Index" asp-controller="Cart"> <i class="fas fa-sign-out-alt"></i>Back To Shopping Cart</a>
                             </div>
                         }
                         else
                         {
-                            <div class="col-12 col-md-5 offset-md-7">
-                                <button type="submit" class="btn btn-outline-success form-control">Submit Order</button>
+                            <div class="col-6 col-md-3 offset-md-6">
+                                <button type="submit" class="btn btn-outline-primary form-control"><i class="fa fa-paper-plane" aria-hidden="true"></i>Submit Inquiry</button>
+                            </div>
+                            <div class="col-6 col-md-3">
+                                <a class="btn btn-outline-info form-control" asp-action="Index" asp-controller="Cart"> <i class="fas fa-sign-out-alt"></i>Back To Shopping Cart</a>
                             </div>
                         }
 
@@ -163,4 +182,26 @@
 
 @section Scripts{
     <partial name="_ValidationScriptsPartial" />
+
+    <script src="https://js.braintreegateway.com/web/dropin/1.30.1/js/dropin.min.js"></script>
+    <script>
+        var client_token = "@ViewBag.ClientToken";
+        var form = document.querySelector('#payment-form');
+        braintree.dropin.create({
+            authorization: client_token,
+              container: '#dropin-container'
+            }, function (createErr, instance) {
+                    form.addEventListener('submit', function () {
+                        event.preventDefault();
+                        //Add the nonce to the form and submit
+                        instance.requestPaymentMethod(function (err, payload) {
+                                    console.log("Inside")
+                                    // Submit payload.nonce to your server
+                                    document.querySelector('#nonce').value = payload.nonce;
+                                    form.submit();
+                                });
+                            });
+        });
+    </script>
+
 }

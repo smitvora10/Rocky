@@ -12,7 +12,7 @@ namespace Rocky_Models
     {
 
         [Key]
-        public int Id { get; set; }
+        public int OrderDetailId { get; set; }
 
         [Required]
         public int OrderHeaderId { get; set; }
@@ -25,7 +25,7 @@ namespace Rocky_Models
         [ForeignKey("ProductId")]
         public Product Product { get; set; }
 
-        public int Sqft { get; set; }
+        public int SqFt { get; set; }
         public double PricePerSqFt { get; set; }
     }
 }

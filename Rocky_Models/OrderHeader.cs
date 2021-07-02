@@ -11,7 +11,7 @@ namespace Rocky_Models
     public class OrderHeader
     {
         [Key]
-        public int Id { get; set; }
+        public int OrderHeaderId { get; set; }
 
         public string CreatedByUserId { get; set; }
         [ForeignKey("CreatedByUserId")]
