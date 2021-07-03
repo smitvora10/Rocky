@@ -34,7 +34,7 @@ namespace Rocky
             services.AddDbContext<ApplicationDbContext>(option =>
             option.UseSqlServer(
                 Configuration.GetConnectionString("DefaultConnection")
-                )) ;
+                ));
             services.AddIdentity<IdentityUser, IdentityRole>().AddDefaultTokenProviders().
                 AddDefaultUI().AddEntityFrameworkStores<ApplicationDbContext>();
             services.AddTransient<IEmailSender, EmailSender>();
@@ -56,8 +56,15 @@ namespace Rocky
             services.AddScoped<IOrderHeaderRepository, OrderHeaderRepository>();
             services.AddScoped<IOrderDetailRepository, OrderDetailRepository>();
             services.AddScoped<IApplicationUserRepository, ApplicationUserRepository>();
+            services.AddAuthentication().AddFacebook(Options =>
+            {
+                Options.AppId = "306755134517989";
+                Options.AppSecret = "2686dacf587d78134b24e6bbc77d34fc";
+
+            });
+
             services.AddControllersWithViews();
-            
+
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

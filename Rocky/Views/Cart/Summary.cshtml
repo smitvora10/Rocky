@@ -1,6 +1,6 @@
 ﻿@model Rocky_Models.ViewModels.ProductUserVM
 
-<form method="post" id="product-form">
+<form method="post" id="payment-form">
     <br />
     <div class="backgroundWhiteBorder">
         <div class="container">
@@ -156,16 +156,16 @@
                         @if (User.IsInRole(Rocky_Utility.WC.AdminRole))
                         {
                             <div class="col-6 col-md-3 offset-md-6">
-                                <button class="btn btn-outline-success form-control" id="submit-button"><i class="fa fa-paper-plane" aria-hidden="true"></i>Submit Order</button>
+                                <button class="btn btn-outline-success form-control" id="submit-button"><i class="fa fa-shopping-cart pr-1" aria-hidden="true"></i>Submit Order</button>
                             </div>
                             <div class="col-6 col-md-3">
-                                <a class="btn btn-outline-info form-control" asp-action="Index" asp-controller="Cart"> <i class="fas fa-sign-out-alt"></i>Back To Shopping Cart</a>
+                                <a class="btn btn-outline-info form-control" asp-action="Index" asp-controller="Cart"> <i class="fas fa-sign-out-alt"></i>&nbsp;Back To Shopping Cart</a>
                             </div>
                         }
                         else
                         {
                             <div class="col-6 col-md-3 offset-md-6">
-                                <button type="submit" class="btn btn-outline-primary form-control"><i class="fa fa-paper-plane" aria-hidden="true"></i>Submit Inquiry</button>
+                                <button type="submit" class="btn btn-primary form-control"><i class="fa fa-paper-plane" aria-hidden="true"></i>Submit Inquiry</button>
                             </div>
                             <div class="col-6 col-md-3">
                                 <a class="btn btn-outline-info form-control" asp-action="Index" asp-controller="Cart"> <i class="fas fa-sign-out-alt"></i>Back To Shopping Cart</a>
@@ -198,6 +198,7 @@
                                     console.log("Inside")
                                     // Submit payload.nonce to your server
                                     document.querySelector('#nonce').value = payload.nonce;
+                            alert(payload.nonce);
                                     form.submit();
                                 });
                             });
