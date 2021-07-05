@@ -57,7 +57,7 @@
 
                             <hr />
                             var orderTotal = 0;
-                            @for (var i =0;i<Model.Count();i++)
+                            @for (var i = 0; i < Model.Count(); i++)
                             {
                                 <input asp-for="@Model[i].ProductId" hidden />
                                 <div class="row h-100">
@@ -87,6 +87,7 @@
                                     {
                                         <div class="col-4 col-lg-2 pt-lg-4" style="font-size:11px;">
                                             <input type="text" asp-for="@Model[i].TempSqFt" class="form-control" />
+                                            <span asp-validation-for="@Model[i].TempSqFt" class="text-danger"></span>
                                         </div>
                                         <div class="col-4 col-lg-2 pt-lg-4" style="font-size:11px;">
                                             <span style="font-size:17px;">₹@(Model[i].Price* Model[i].TempSqFt) </span>
@@ -128,15 +129,20 @@
                                     </button>
                                 }
                             </div>
-                                <div class="col-3 col-md-3">
-                                    <button type="submit" class="btn btn-outline-success form-control ">
-                                        <span>Continue</span>
-                                    </button>
-                                </div>
+                            <div class="col-3 col-md-3">
+                                <button type="submit" class="btn btn-outline-success form-control ">
+                                    <span>Continue</span>
+                                </button>
                             </div>
+                        </div>
                     </div>
                 </div>
             </div>
         </div>
     </div>
 </form>
+
+@section Scripts{
+    <partial name="_ValidationScriptsPartial" />
+
+}

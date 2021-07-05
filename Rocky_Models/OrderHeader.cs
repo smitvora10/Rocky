@@ -18,13 +18,16 @@ namespace Rocky_Models
         public ApplicationUser CreatedBy { get; set; }
 
         [Required]
-        public DateTime OrderDate { get; set; }
-        [Required]
+        [DataType(DataType.Date)]
+        public DateTime OrderDate { get; set; }       
+        [DataType(DataType.Date)]
         public DateTime ShippingDate { get; set; }
         [Required]
         public double FinalOrderTotal { get; set; }
         public string OrderStatus { get; set; }
+        [DataType(DataType.Date)]
         public DateTime PaymentDate { get; set; }
+        [DataType(DataType.Date)]
         public DateTime PaymentDueDate { get; set; }
         public string TransactionId { get; set; }
 
