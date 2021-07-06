@@ -241,29 +241,29 @@ namespace Rocky.Controllers
                 InquiryHeader inquiryHeader = new InquiryHeader()
                 {
                     ApplicationUserId = userId,
-                    InquiryDate = DateTime.Now.Date,
-                    PhoneNumber = productUserVM.ApplicationUser.PhoneNumber,
                     FullName = productUserVM.ApplicationUser.FullName,
-                    Email = productUserVM.ApplicationUser.Email
+                    Email = productUserVM.ApplicationUser.Email,
+                    PhoneNumber = productUserVM.ApplicationUser.PhoneNumber,
+                    InquiryDate = DateTime.Now.Date
+
                 };
+
                 _inqHRepo.Add(inquiryHeader);
                 _inqHRepo.Save();
 
-
                 foreach (var prod in productUserVM.ProductList)
                 {
-
                     InquiryDetail inquiryDetail = new InquiryDetail()
                     {
                         InquiryHeaderId = inquiryHeader.InquiryHeaderId,
-                        ProductId = prod.ProductId
+                        ProductId = prod.ProductId,
 
                     };
                     _inqDRepo.Add(inquiryDetail);
 
                 }
                 _inqDRepo.Save();
-                TempData[WC.Success] = "Inquiry created Successfully";
+                TempData[WC.Success] = "Inquiry submitted successfully";
             }
 
 
