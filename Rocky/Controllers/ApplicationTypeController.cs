@@ -11,7 +11,7 @@ using System.Threading.Tasks;
 
 namespace Rocky.Controllers
 {
-    [Authorize(Roles=WC.AdminRole)]     
+    [Authorize(Roles = WC.AdminRole)]
     public class ApplicationTypeController : Controller
     {
         private readonly IApplicationTypeRepository _appTypeRepo;
@@ -26,7 +26,7 @@ namespace Rocky.Controllers
         }
         //GET ApplicationType
         public IActionResult Create()
-        {            
+        {
             return View();
         }
         //POST ApplicationType
@@ -34,19 +34,23 @@ namespace Rocky.Controllers
         [ValidateAntiForgeryToken]
         public IActionResult Create(ApplicationType obj)
         {
-            _appTypeRepo.Add(obj);
-            _appTypeRepo.Save();
-            return RedirectToAction("Index");
+            if (ModelState.IsValid)
+            {
+                _appTypeRepo.Add(obj);
+                _appTypeRepo.Save();
+                return RedirectToAction("Index");
+            }
+            return View(obj);
         }
         //GET ApplicationType
-        public IActionResult Edit(int ? Id)
+        public IActionResult Edit(int? Id)
         {
-            if(Id == 0 || Id == null)
+            if (Id == 0 || Id == null)
             {
                 return NotFound();
             }
             var obj = _appTypeRepo.Find(Id.GetValueOrDefault());
-            if(obj == null)
+            if (obj == null)
             {
                 return NotFound();
             }
@@ -57,7 +61,7 @@ namespace Rocky.Controllers
         [ValidateAntiForgeryToken]
         public IActionResult Edit(ApplicationType obj)
         {
-            if(ModelState.IsValid)
+            if (ModelState.IsValid)
             {
                 _appTypeRepo.Update(obj);
                 _appTypeRepo.Save();
@@ -86,13 +90,14 @@ namespace Rocky.Controllers
         public IActionResult DeletePost(int? ApplicationTypeId)
         {
             var obj = _appTypeRepo.Find(ApplicationTypeId.GetValueOrDefault());
-            if (ModelState.IsValid)
+            if (obj == null)
             {
-                _appTypeRepo.Remove(obj);
-                _appTypeRepo.Save();
-                return RedirectToAction("Index");
+                return NotFound();
             }
-            return View(obj);
+            _appTypeRepo.Remove(obj);
+            _appTypeRepo.Save();
+            return RedirectToAction("Index");
+
         }
     }
 }
