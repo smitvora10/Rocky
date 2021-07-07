@@ -25,7 +25,7 @@
     $(".filter-button").click(function(){
 
         var value = $(this).attr('data-filter');
-        console.log(value);
+        
         if(value == "all")
         {
             $('.filter').show('');
@@ -36,7 +36,7 @@
             $('.filter').filter('.'+value).show('');
 
         }
-        console.log($('.filter'));
+        
     });
 
 });

@@ -96,7 +96,7 @@ namespace Rocky.Controllers
                 shoppingCartList = HttpContext.Session.Get<List<ShoppingCart>>(WC.SessionCart);
             }
 
-            var itemToRemove = shoppingCartList.SingleOrDefault(u => u.ShoppingProductId == id);
+            var itemToRemove = shoppingCartList.FirstOrDefault(u => u.ShoppingProductId == id);
 
             if (itemToRemove != null)
             {
