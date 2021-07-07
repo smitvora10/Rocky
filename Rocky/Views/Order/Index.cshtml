@@ -34,7 +34,6 @@
     </div>
 </form>
 <hr />
-
 <div class="bg-white p-3 mb-2">
     <ejs-grid id="Grid" dataSource="@Model.OrderHList" allowFiltering="true" allowSorting="true" allowPaging="true">
         <e-grid-filtersettings type="Menu"></e-grid-filtersettings>
@@ -49,7 +48,6 @@
             <e-grid-column field="OrderDate" headerText="Order Date" customFormat="@(new { type="date", format="MM/dd/yyyy" })" textAlign="Right"></e-grid-column>
             <e-grid-column field="OrderHeaderId" headerText="" width="70"
                            template="<a rel='nofollow' href='Order/Details/${OrderHeaderId}' class='btn btn-primary'> <i class='fas fa-list'></i><a>">
-
             </e-grid-column>
         </e-grid-columns>
     </ejs-grid>
