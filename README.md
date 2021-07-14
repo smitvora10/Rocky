@@ -23,8 +23,3 @@ Rocky Pavers
 - [@smitvora](https://github.com/smitvora10/Rocky)
 
   
-## Documentation
-It Contains these base files and two apps inside it blog and shop
-[Content Management]
-[Order management]
-  
